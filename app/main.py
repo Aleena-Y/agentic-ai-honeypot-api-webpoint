@@ -26,7 +26,7 @@ def honeypot(data: RequestSchema, x_api_key: str = Header(...)):
 
     if detect_scam(data.message.text):
         session["scamDetected"] = True
-        extract_intelligence(data.message.text, session["intelligence"])
+        extract_intelligence(session["messages"], session["intelligence"])
 
     try:
         reply = generate_reply(session["messages"])
