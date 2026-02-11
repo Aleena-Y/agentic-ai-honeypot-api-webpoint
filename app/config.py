@@ -8,5 +8,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 API_KEY = os.getenv("API_KEY")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_WEBHOOK_SECRET = os.getenv("TELEGRAM_WEBHOOK_SECRET")
+DASHBOARD_API_KEY = os.getenv("DASHBOARD_API_KEY")
+DASHBOARD_DB_PATH = os.getenv("DASHBOARD_DB_PATH", "data/dashboard.db")
 
 GUVI_CALLBACK_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
