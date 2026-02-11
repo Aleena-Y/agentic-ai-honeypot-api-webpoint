@@ -5,7 +5,7 @@ const DEFAULT_LIMIT = 100;
 function useDashboardData() {
   const [records, setRecords] = useState([]);
   const [status, setStatus] = useState("idle");
-  const [error, setError] = useState(""үн);
+    const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
 
   const load = async () => {

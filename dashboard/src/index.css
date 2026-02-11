@@ -1,0 +1,275 @@
+:root {
+  color-scheme: light;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #f6f1ff, #fef9f2 60%, #f2f9ff);
+  color: #151515;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.page {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 12px;
+  color: #6a5acd;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  max-width: 520px;
+  margin: 8px 0 0;
+  color: #444;
+}
+
+.hero-actions {
+  text-align: right;
+}
+
+.ghost {
+  background: #151515;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.timestamp {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #666;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  padding: 16px;
+  border-radius: 16px;
+  background: #ffffffcc;
+  border: 1px solid #e6e6e6;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.stat-value {
+  font-size: 28px;
+  margin-top: 8px;
+}
+
+.panel {
+  background: #ffffffd8;
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid #ececec;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel-subtitle {
+  margin: 4px 0 0;
+  color: #666;
+}
+
+.search {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  min-width: 220px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 2fr;
+  gap: 16px;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.session-item {
+  border: 1px solid #e2e2e2;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: left;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.session-item.active {
+  border-color: #6a5acd;
+  box-shadow: 0 0 0 2px #6a5acd33;
+}
+
+.session-id {
+  font-weight: 600;
+}
+
+.session-meta {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  align-self: flex-start;
+}
+
+.badge.danger {
+  background: #ffdfdf;
+  color: #a12626;
+}
+
+.badge.muted {
+  background: #f2f2f2;
+  color: #555;
+}
+
+.session-detail {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-meta {
+  color: #666;
+  font-size: 12px;
+}
+
+.detail-count {
+  font-weight: 600;
+}
+
+.intel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.intel-block {
+  background: #f8f8ff;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #e7e7f4;
+}
+
+.intel-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.intel-empty {
+  font-size: 12px;
+  color: #666;
+}
+
+.messages {
+  margin-top: 16px;
+}
+
+.message-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.message {
+  border: 1px solid #ededed;
+  border-radius: 12px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.message-meta {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+}
+
+.message-text {
+  margin-top: 6px;
+}
+
+.state {
+  padding: 12px 0;
+  color: #444;
+}
+
+.state.error {
+  color: #b42318;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-actions {
+    text-align: left;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
