@@ -4,10 +4,12 @@ from typing import Optional
 
 import requests
 from fastapi import FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import RequestSchema
 from app.config import (
     API_KEY,
     DASHBOARD_API_KEY,
+    DASHBOARD_ORIGINS,
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_WEBHOOK_SECRET,
 )
@@ -23,6 +25,15 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(levelname)s:%(name)s:%(message)s"
+)
+
+allowed_origins = DASHBOARD_ORIGINS or ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 
