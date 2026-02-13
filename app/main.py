@@ -50,6 +50,18 @@ def build_final_payload(session_id: str, session: dict) -> dict:
         "extractedIntelligence": session["intelligence"],
         "agentNotes": "Urgency-based scam detected",
     }
+
+
+def build_dashboard_payload(session_id: str, session: dict) -> dict:
+    return {
+        "sessionId": session_id,
+        "scamDetected": session["scamDetected"],
+        "totalMessagesExchanged": len(session["messages"]),
+        "extractedIntelligence": session["intelligence"],
+        "agentNotes": "Urgency-based scam detected"
+        if session["scamDetected"]
+        else "Monitoring",
+    }
 def process_message(session_id: str, message: dict) -> str:
     session = get_session(session_id)
     session["messages"].append(message)
@@ -65,12 +77,11 @@ def process_message(session_id: str, message: dict) -> str:
         print("🔥 REAL LLM ERROR:", repr(e))
         reply = "I am not understanding this properly. Can you explain again?"
 
-    if session["scamDetected"] and len(session["messages"]) >= 8:
-        payload = build_final_payload(session_id, session)
-        if session_id.startswith("telegram:"):
-            save_telegram_final(payload, session["messages"])
-        else:
-            send_final_callback(session_id, session)
+    if session_id.startswith("telegram:"):
+        payload = build_dashboard_payload(session_id, session)
+        save_telegram_final(payload, session["messages"])
+    elif session["scamDetected"] and len(session["messages"]) >= 8:
+        send_final_callback(session_id, session)
 
     return reply
 
