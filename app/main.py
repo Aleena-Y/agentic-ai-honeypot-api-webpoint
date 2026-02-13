@@ -62,13 +62,17 @@ def build_dashboard_payload(session_id: str, session: dict) -> dict:
         if session["scamDetected"]
         else "Monitoring",
     }
+
+
 def process_message(session_id: str, message: dict) -> str:
     session = get_session(session_id)
     session["messages"].append(message)
 
+    # Always extract intelligence from scammer messages, even before a scam is flagged.
+    extract_intelligence(session["messages"], session["intelligence"])
+
     if detect_scam(message.get("text", "")):
         session["scamDetected"] = True
-        extract_intelligence(session["messages"], session["intelligence"])
 
     try:
         reply = generate_reply(session["messages"])
