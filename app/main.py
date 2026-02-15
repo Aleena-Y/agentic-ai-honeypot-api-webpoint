@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from typing import Optional
 
@@ -19,6 +20,8 @@ from app.intelligence import extract_intelligence
 from app.memory import get_session
 from app.callback import send_final_callback
 from app.dashboard_store import init_dashboard_db, list_telegram_finals, save_telegram_final
+
+import uvicorn
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -146,3 +149,8 @@ def dashboard_records(x_api_key: str = Header(...), limit: int = 100):
         raise HTTPException(status_code=401, detail="Invalid API key")
 
     return {"records": list_telegram_finals(limit)}
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", "8080"))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
