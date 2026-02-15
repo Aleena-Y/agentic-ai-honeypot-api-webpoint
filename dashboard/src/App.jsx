@@ -10,6 +10,7 @@ function useDashboardData() {
 
   const load = async () => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+    console.log("API Base URL:", baseUrl); // Debugging
     const apiKey = import.meta.env.VITE_DASHBOARD_API_KEY || "";
     const url = `${baseUrl}/dashboard/records?limit=${DEFAULT_LIMIT}`;
 
