@@ -45,44 +45,96 @@ def startup() -> None:
     init_dashboard_db()
 
 
+def build_agent_notes(session: dict) -> str:
+    signals = ", ".join(session.get("scamSignals", []))
+    if not signals:
+        signals = "low-signal conversation"
+    notes = f"Signals observed: {signals}."
+    intelligence = session.get("intelligence", {})
+    key_entities = []
+    if intelligence.get("phoneNumbers"):
+        key_entities.append("phone numbers")
+    if intelligence.get("upiIds"):
+        key_entities.append("UPI IDs")
+    if intelligence.get("bankAccounts"):
+        key_entities.append("bank accounts")
+    if intelligence.get("suspiciousDomains"):
+        key_entities.append("suspicious domains")
+    if key_entities:
+        notes += f" Entities collected: {', '.join(key_entities)}."
+    return notes
+
+
 def build_final_payload(session_id: str, session: dict) -> dict:
+    duration = int(time.time()) - session.get("startedAt", int(time.time()))
     return {
         "sessionId": session_id,
-        "scamDetected": True,
-        "totalMessagesExchanged": len(session["messages"]),
-        "extractedIntelligence": session["intelligence"],
-        "agentNotes": "Urgency-based scam detected",
+        "status": "completed",
+        "scamDetected": session.get("scamDetected", False),
+        "extractedIntelligence": session.get("intelligence", {}),
+        "engagementMetrics": {
+            "totalMessagesExchanged": len(session.get("messages", [])),
+            "engagementDurationSeconds": max(duration, 0),
+        },
+        "agentNotes": build_agent_notes(session),
     }
 
 
 def build_dashboard_payload(session_id: str, session: dict) -> dict:
-    return {
-        "sessionId": session_id,
-        "scamDetected": session["scamDetected"],
-        "totalMessagesExchanged": len(session["messages"]),
-        "extractedIntelligence": session["intelligence"],
-        "agentNotes": "Urgency-based scam detected"
-        if session["scamDetected"]
-        else "Monitoring",
-    }
+    payload = build_final_payload(session_id, session)
+    payload["scamConfidence"] = session.get("scamConfidence", 0.0)
+    payload["totalMessagesExchanged"] = len(session.get("messages", []))
+    return payload
 
 
 def process_message(session_id: str, message: dict) -> str:
     session = get_session(session_id)
+    now = int(time.time())
     session["messages"].append(message)
+    session["conversationCount"] += 1
+    session["lastUpdatedAt"] = now
 
     # Always extract intelligence from scammer messages, even before a scam is flagged.
     extract_intelligence(session["messages"], session["intelligence"])
+    for key, value in session["intelligence"].items():
+        if isinstance(value, list):
+            session["entitiesCollected"][key] = len(value)
 
-    if detect_scam(message.get("text", "")):
-        session["scamDetected"] = True
+    if message.get("sender", "").lower() == "scammer":
+        detection = detect_scam(message.get("text", ""))
+        session["scamConfidence"] = max(session.get("scamConfidence", 0.0), detection["score"])
+        session_signals = set(session.get("scamSignals", []))
+        session_signals.update(detection.get("categories", []))
+        session["scamSignals"] = sorted(session_signals)
+
+        if session["scamConfidence"] >= 0.75:
+            session["scamDetected"] = True
+
+    if session["scamConfidence"] >= 0.75:
+        strategy = "high"
+    elif session["scamConfidence"] >= 0.45:
+        strategy = "moderate"
+    else:
+        strategy = "low"
 
     try:
-        reply = generate_reply(session["messages"])
+        reply = generate_reply(
+            session["messages"],
+            session=session,
+            strategy=strategy,
+            scam_confidence=session["scamConfidence"],
+            signals=session.get("scamSignals", []),
+        )
     except Exception as e:
         logger.exception("LLM failed, using fallback")
         print("🔥 REAL LLM ERROR:", repr(e))
-        reply = "I am not understanding this properly. Can you explain again?"
+        reply = "Thoda clear batana, mujhe samajh nahi aa raha."
+
+    session["messages"].append(
+        {"sender": "user", "text": reply, "timestamp": int(time.time())}
+    )
+    session["conversationCount"] += 1
+    session["lastUpdatedAt"] = int(time.time())
 
     if session_id.startswith("telegram:"):
         payload = build_dashboard_payload(session_id, session)

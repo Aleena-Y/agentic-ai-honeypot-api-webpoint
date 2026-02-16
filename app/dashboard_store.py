@@ -32,12 +32,13 @@ def init_dashboard_db() -> None:
 
 def save_telegram_final(payload: Dict, raw_messages: List[Dict]) -> None:
     now = datetime.utcnow().isoformat() + "Z"
+    engagement = payload.get("engagementMetrics", {})
     record = {
         "session_id": payload.get("sessionId"),
         "created_at": now,
         "updated_at": now,
         "scam_detected": 1 if payload.get("scamDetected") else 0,
-        "total_messages": payload.get("totalMessagesExchanged", 0),
+        "total_messages": payload.get("totalMessagesExchanged", engagement.get("totalMessagesExchanged", 0)),
         "extracted_intelligence": json.dumps(payload.get("extractedIntelligence", {})),
         "agent_notes": payload.get("agentNotes", ""),
         "raw_messages": json.dumps(raw_messages),
